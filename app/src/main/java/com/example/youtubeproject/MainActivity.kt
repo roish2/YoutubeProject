@@ -10,8 +10,8 @@ import com.example.youtubeproject.ui.MainFragment
 
 class MainActivity : AppCompatActivity() {
 
-    lateinit var viewModel :MainViewModel
-    lateinit var progressBar :ProgressBar
+    private lateinit var viewModel :MainViewModel
+    private lateinit var progressBar :ProgressBar
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
