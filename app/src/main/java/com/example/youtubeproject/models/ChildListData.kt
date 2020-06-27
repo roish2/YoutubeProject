@@ -4,5 +4,5 @@ import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
-data class ExpendedListData(val title:String?, val date:String?,val description:String?, val videoId:String?) :
+data class ChildListData(val title:String?, val date:String?, val description:String?, val videoId:String?) :
     Parcelable

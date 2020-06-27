@@ -2,9 +2,9 @@ package com.example.youtubeproject
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.youtubeproject.models.ExpendedListData
-import com.example.youtubeproject.models.HeaderListData
+import com.example.youtubeproject.models.ChildListData
 import com.example.youtubeproject.models.JsonRootResponse
+import com.example.youtubeproject.models.RecyclerHeaderData
 import com.example.youtubeproject.network.RetrofitClient
 import com.example.youtubeproject.network.YoutubeInterface
 import retrofit2.Call
@@ -18,8 +18,8 @@ import kotlin.collections.ArrayList
 class MainViewModel: ViewModel() {
 
     private var listCall: Call<JsonRootResponse?>?
-    private val headerData:ArrayList<HeaderListData> = ArrayList()
-    private val childData: HashMap<String, ArrayList<ExpendedListData>> = HashMap()
+    private val headerRecyclerData :ArrayList<RecyclerHeaderData> = ArrayList()
+    private val childData: HashMap<String, ArrayList<ChildListData>> = HashMap()
     var steps = MutableLiveData<Steps>()
 
     init {
@@ -45,24 +45,28 @@ class MainViewModel: ViewModel() {
 
         response?.let {
             it.items?.onEach {headItem ->
-                val childAdapterData : ArrayList<ExpendedListData> = ArrayList<ExpendedListData>()
-                var child: ExpendedListData
+                val childAdapterData : ArrayList<ChildListData> = ArrayList<ChildListData>()
+                var child: ChildListData
                 headItem.snippet?.publishedAt
                 val date:String = getFormattedDate(headItem.snippet?.publishedAt)
-                val headerListData: HeaderListData = HeaderListData(headItem.id, headItem.snippet?.title, date, headItem.snippet?.thumbnails?.default?.url, headItem.snippet?.channelTitle)
-                headerData.add(headerListData)
+
 
                 headItem.playlistItems?.items?.onEach {playList->
                     val videoDate = getFormattedDate(playList.contentDetails.videoPublishedAt)
-                    child = ExpendedListData(playList.videoSnippet.title, videoDate, playList.videoSnippet.description, playList.videoSnippet.resourceId?.videoId)
+                    child = ChildListData(playList.videoSnippet.title, videoDate, playList.videoSnippet.description, playList.videoSnippet.resourceId?.videoId)
                     childAdapterData.add(child)
                 }
                 headItem.id?.let {headerId->
                     childData.put(headerId, childAdapterData)
                 }
+
+                val headerRecyclerItem = RecyclerHeaderData(headItem.id, headItem.snippet?.title, date, headItem.snippet?.thumbnails?.default?.url, headItem.snippet?.channelTitle, childAdapterData)
+
+                headerRecyclerData.add(headerRecyclerItem)
+
             }
         }
-        steps.value = Steps.DataReady(headerData, childData)
+        steps.value = Steps.DataReady(headerRecyclerData)
     }
 
     //method to convert the input dateFormat to an more convention format
@@ -91,7 +95,7 @@ class MainViewModel: ViewModel() {
     //class that contain the flow's steps
     //can add steps as necessary
     sealed class Steps(){
-        class DataReady(val headerData:ArrayList<HeaderListData>,val childData: HashMap<String, ArrayList<ExpendedListData>>) :Steps()
+        class DataReady(val headerRecyclerData: ArrayList<RecyclerHeaderData>) :Steps()
         object OnError :Steps()
     }
 }
