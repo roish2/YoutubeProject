@@ -28,8 +28,8 @@ class YoutubeCustomView @JvmOverloads constructor(
         val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         val myLayout  = inflater.inflate(R.layout.youtube_list_expand_item, this, true)
 
-        titleText= myLayout.findViewById(R.id.textView3)
-        dateText = myLayout.findViewById(R.id.textView4)
+        titleText= myLayout.findViewById(R.id.video_title)
+        dateText = myLayout.findViewById(R.id.video_date)
         videoPlayer = myLayout.findViewById(R.id.video_player)
 
     }
